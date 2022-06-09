@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import logo from '../assets/banana-01.png';
 import { useHistory, Link } from 'react-router-dom';
+import {AuthContext} from "../context/AuthContext";
 
 function NavBar() {
   const history = useHistory();
+  const {ingelogd, uitlogFunction} = useContext(AuthContext)
+  console.log(ingelogd)
 
   return (
     <nav>
@@ -17,12 +20,17 @@ function NavBar() {
         </Link>
 
       <div>
-        <button
-          type="button"
-          onClick={() => history.push('/signin')}
+        {ingelogd ? <button
+            type="button"
+            onClick={uitlogFunction}
+        >
+            Log uit
+        </button> : <button
+            type="button"
+            onClick={() => history.push('/signin')}
         >
           Log in
-        </button>
+        </button>}
         <button
           type="button"
           onClick={() => history.push('/signup')}
