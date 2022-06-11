@@ -5,22 +5,24 @@ import {AuthContext} from "../context/AuthContext";
 function SignIn() {
     const {inlogFunction} = useContext(AuthContext)
 
-  return (
-    <>
-      <h1>Inloggen</h1>
-      <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab alias cum debitis dolor dolore fuga id molestias qui quo unde?</p>
+    return (
+        <>
+            <h1>Inloggen</h1>
+            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab alias cum debitis dolor dolore fuga id
+                molestias qui quo unde?</p>
 
-      <form>
-        <p>*invoervelden*</p>
-        <button
-            type="submit"
-            onClick={inlogFunction}
-        >Inloggen</button>
-      </form>
+            <form>
+                <p>*invoervelden*</p>
+                <button
+                    type="submit"
+                    onClick={inlogFunction}
+                >Inloggen
+                </button>
+            </form>
 
-      <p>Heb je nog geen account? <Link to="/signup">Registreer</Link> je dan eerst.</p>
-    </>
-  );
+            <p>Heb je nog geen account? <Link to="/signup">Registreer</Link> je dan eerst.</p>
+        </>
+    );
 }
 
 export default SignIn;
