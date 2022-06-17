@@ -1,23 +1,58 @@
 import React, {createContext, useState} from 'react';
 import {useHistory} from "react-router-dom";
+import jwtDecode from "jwt-decode";
+import axios from "axios";
 
 export const AuthContext = createContext({})
 
 function AuthContextProvider({children}) {
-    const [isAuth, toggleIsAuth] = useState(false);
+    const [isAuth, toggleIsAuth] = useState({
+        isAuth: false,
+        user: null
+    });
     const history = useHistory();
 
-    function inloggen() {
-        toggleIsAuth(true)
-        console.log("Gebruiker is ingelogd!")
-        history.push('/profile')
+    function inloggen(jwt) {
+        const decode = jwtDecode(jwt)
+        getData(decode.sub, jwt)
+        localStorage.setItem('token', jwt)
+
+    }
+
+    async function getData(id, token){
+        try {
+            const data = await axios.get(`http://localhost:3000/600/users/${id}`, {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                }
+            })
+            toggleIsAuth({
+                isAuth: true,
+                user: {
+                    username: data.data.username,
+                    email: data.data.email,
+                    id: data.data.id,
+                }
+            })
+            history.push('/profile')
+            console.log(data.data)
+        } catch (e) {
+            console.error(e)
+        }
     }
 
     function uitloggen() {
-        toggleIsAuth(false)
-        console.log("Gebruiker is uitgelogd!")
+        toggleIsAuth({
+            isAuth: false,
+            user: null,
+        })
+        localStorage.clear()
+        console.log(isAuth)
         history.push('/')
     }
+
+
 
     const data = {
         ingelogd: isAuth,
