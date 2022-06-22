@@ -8,7 +8,8 @@ export const AuthContext = createContext({})
 function AuthContextProvider({children}) {
     const [isAuth, toggleIsAuth] = useState({
         isAuth: false,
-        user: null
+        user: null,
+        status: 'pending',
     });
     const history = useHistory();
 
@@ -16,10 +17,9 @@ function AuthContextProvider({children}) {
         const decode = jwtDecode(jwt)
         getData(decode.sub, jwt)
         localStorage.setItem('token', jwt)
-
     }
 
-    async function getData(id, token){
+    async function getData(id, token) {
         try {
             const data = await axios.get(`http://localhost:3000/600/users/${id}`, {
                 headers: {
@@ -36,7 +36,6 @@ function AuthContextProvider({children}) {
                 }
             })
             history.push('/profile')
-            console.log(data.data)
         } catch (e) {
             console.error(e)
         }
@@ -48,14 +47,12 @@ function AuthContextProvider({children}) {
             user: null,
         })
         localStorage.clear()
-        console.log(isAuth)
         history.push('/')
     }
 
 
-
     const data = {
-        ingelogd: isAuth,
+        ingelogd: isAuth.isAuth,
         inlogFunction: inloggen,
         uitlogFunction: uitloggen,
     }

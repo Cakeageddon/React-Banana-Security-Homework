@@ -5,7 +5,7 @@ import {AuthContext} from "../context/AuthContext";
 
 function NavBar() {
     const history = useHistory();
-    const {isAuth, uitloggen} = useContext(AuthContext)
+    const {ingelogd, uitlogFunction} = useContext(AuthContext)
 
     return (
         <nav>
@@ -19,9 +19,9 @@ function NavBar() {
             </Link>
 
             <div>
-                {isAuth ? <button
+                {ingelogd ? <button
                     type="button"
-                    onClick={uitloggen}
+                    onClick={uitlogFunction}
                 >
                     Log uit
                 </button> : <button
@@ -30,6 +30,7 @@ function NavBar() {
                 >
                     Log in
                 </button>}
+
                 <button
                     type="button"
                     onClick={() => history.push('/signup')}
