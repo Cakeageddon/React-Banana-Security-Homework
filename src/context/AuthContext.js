@@ -1,4 +1,4 @@
-import React, {createContext, useState} from 'react';
+import React, {createContext, useEffect, useState} from 'react';
 import {useHistory} from "react-router-dom";
 import jwtDecode from "jwt-decode";
 import axios from "axios";
@@ -11,7 +11,54 @@ function AuthContextProvider({children}) {
         user: null,
         status: 'pending',
     });
+
     const history = useHistory();
+
+    useEffect(() => {
+        console.log("Context wordt gerefresht!")
+        const token = localStorage.getItem('token')
+
+        if (token) {
+            async function getUserData() {
+                const decode = jwtDecode(token);
+
+                try {
+                    const response = await axios.get(`http://localhost:3000/600/users/${decode.sub}`, {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${token}`,
+                        }
+                    });
+                    console.log(response)
+                    toggleIsAuth({
+                        isAuth: true,
+                        status: 'done',
+                        user: {
+                            username: response.data.username,
+                            email: response.data.email,
+                            id: response.data.id,
+                        }
+                    })
+
+                } catch (e) {
+                    toggleIsAuth({
+                        ...isAuth,
+                        status: 'error'
+                    })
+                    console.error(e);
+                }
+            }
+
+            getUserData();
+        } else {
+            toggleIsAuth({
+                isAuth: false,
+                user: null,
+                status: 'done',
+            })
+            localStorage.clear()
+        }
+    }, []);
 
     function inloggen(jwt) {
         const decode = jwtDecode(jwt)
@@ -29,6 +76,7 @@ function AuthContextProvider({children}) {
             })
             toggleIsAuth({
                 isAuth: true,
+                status: 'done',
                 user: {
                     username: data.data.username,
                     email: data.data.email,
@@ -45,6 +93,7 @@ function AuthContextProvider({children}) {
         toggleIsAuth({
             isAuth: false,
             user: null,
+            status: 'done'
         })
         localStorage.clear()
         history.push('/')
@@ -55,11 +104,12 @@ function AuthContextProvider({children}) {
         ingelogd: isAuth.isAuth,
         inlogFunction: inloggen,
         uitlogFunction: uitloggen,
+        user: isAuth.user
     }
 
     return (
         <AuthContext.Provider value={data}>
-            {children}
+            {isAuth.status === 'done' ? children : <p>Loading...</p>}
         </AuthContext.Provider>
     )
 }
