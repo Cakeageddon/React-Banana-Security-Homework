@@ -42,7 +42,7 @@ function SignIn() {
                 <label htmlFor="form-wachtwoord">
                     Wachtwoord:
                     <input
-                        type="text"
+                        type="password"
                         id="form-wachtwoord"
                         {...register("wachtwoord")}
                     />
